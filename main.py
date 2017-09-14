@@ -16,25 +16,37 @@ root = ET.fromstring(data)
 #array of available currency symbols
 availableCurrencies = []
 for child in root:
-	symbol = child.get("Symbol")
+	symbol = child.get("Symbol").upper()
 	availableCurrencies.append(symbol)
 	
 #get the currency and target rate
-Currency = input("Enter the currency to check: ")
+Currency = input("Enter the currency to check: ").upper()
 if ((Currency not in availableCurrencies)):
 	print("This currency is not available")
-	Currency = input("Enter the currency to check: ")
+	Currency = input("Enter the currency to check: ").upper()
 TargetRate = input("Enter the target rate: ")
 if (TargetRate == None):
 	TargetRate = input("Enter the target rate: ")
 CurrentRate = None
 
-#main loop
-while (CurrentRate != TargetRate):
-	time.sleep(5)
+def getCurrentRate():
 	for child in root:
 		symbol = child.get("Symbol")
 		bid = child.find("Bid").text
 		if (symbol == Currency):
-			CurrentRate = bid
-			print("Current rate is: " + CurrentRate)
+			return bid
+
+CurrentRate = getCurrentRate()
+
+def isLower(current, target):
+	return current < target
+
+initiallyLower = isLower(CurrentRate, TargetRate)
+currentlyLower = initiallyLower
+
+#main loop
+while (CurrentRate != TargetRate and initiallyLower == currentlyLower):
+	time.sleep(5)
+	CurrentRate = getCurrentRate()
+	print("Current rate is: " + CurrentRate)
+	currentlyLower = isLower(CurrentRate, TargetRate)

@@ -13,10 +13,21 @@ data = response.read()
 
 root = ET.fromstring(data)
 
+#array of available currency symbols
+availableCurrencies = []
+for child in root:
+	symbol = child.get("Symbol")
+	availableCurrencies.append(symbol)
+	
 #get the currency and target rate
 Currency = input("Enter the currency to check: ")
+if ((Currency not in availableCurrencies)):
+	print("This currency is not available")
+	Currency = input("Enter the currency to check: ")
 TargetRate = input("Enter the target rate: ")
-CurrentRate = 0
+if (TargetRate == None):
+	TargetRate = input("Enter the target rate: ")
+CurrentRate = None
 
 #main loop
 while (CurrentRate != TargetRate):
